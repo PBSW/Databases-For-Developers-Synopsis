@@ -1,0 +1,16 @@
+{
+  "name": "dataset-creator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^5.0.4",
+    "@types/node": "^20.12.10"
+  }
+}

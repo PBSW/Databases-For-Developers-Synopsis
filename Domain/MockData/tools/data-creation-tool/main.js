@@ -1,0 +1,13 @@
+import { DataSetCreator } from "data-set-creator";
+import { JsonImporter } from "json-importer";
+const userPath = 'C:\\Users\\rouge\\OneDrive\\Desktop\\nutrition.csv';
+const productPath = 'C:\\Users\\rouge\\OneDrive\\Desktop\\nutrition.csv';
+const groceryListPath = 'C:\\Users\\rouge\\OneDrive\\Desktop\\nutrition.csv';
+const userImporter = new JsonImporter();
+const productImporter = new JsonImporter();
+const groceryListImporter = new JsonImporter();
+const users = await userImporter.getJSONData(userPath);
+const products = await productImporter.getJSONData(productPath);
+const groceryLists = await groceryListImporter.getJSONData(groceryListPath);
+const creator = new DataSetCreator(products, users, groceryLists);
+creator.create();
