@@ -10,7 +10,7 @@ GO
 CREATE TABLE Users (
     UserId INT IDENTITY(1,1) PRIMARY KEY,
     Username NVARCHAR(50) NOT NULL,
-    FirstName NVARCHAR(50) NOT NULL,
+    Firstname NVARCHAR(50) NOT NULL,
     Lastname NVARCHAR(50) NOT NULL,
     Email NVARCHAR(100) NOT NULL,
     HashedPassword CHAR(128) NOT NULL
@@ -18,62 +18,69 @@ CREATE TABLE Users (
 
 GO
 
+-- User has zero-to-many lists
 CREATE TABLE GroceryLists (
     ListId INT IDENTITY(1,1) PRIMARY KEY,
     ListName VARCHAR(60) NOT NULL,
-    DateCreated DATETIME NOT NULL
+    DateCreated DATETIME NOT NULL,
+    OwnerId INT NOT NULL,
+    FOREIGN KEY (OwnerId) REFERENCES Users(UserId)
 )
 
-GO
 
--- Many-to-many relationship junction table
-CREATE TABLE Users_Lists (
-    PRIMARY KEY (UserId, ListId),
-    UserId INT NOT NULL,
-    ListId INT NOT NULL,
-    FOREIGN KEY (UserId) REFERENCES Users(UserId),
-    FOREIGN KEY (ListId) REFERENCES GroceryLists(ListId)
-)
-
-GO
-
--- One-to-many
-CREATE TABLE ListItems (
+CREATE TABLE Products (
     ItemId INT IDENTITY(1,1) PRIMARY KEY,
     ItemName VARCHAR(60) NOT NULL,
-    ItemGotten BIT NOT NULL,
-    ListId INT NOT NULL,
-    FOREIGN KEY (ListId) REFERENCES GroceryLists(ListId)
 )
 
 GO
 
 
-INSERT INTO Users (Username, FirstName, Lastname, Email, HashedPassword) 
+-- Many-to-many => Many lists can have many grocery items
+CREATE TABLE ListItems (
+    PRIMARY KEY (ListId, ProductId),
+    ListId INT NOT NULL,
+    ProductId INT NOT NULL,
+    Quantity INT NOT NULL,
+    ItemGotten BIT NOT NULL,
+    FOREIGN KEY (ListId) REFERENCES GroceryLists(ListId),
+    FOREIGN KEY (ProductId) REFERENCES Products(ItemId)
+)
+GO
+
+
+INSERT INTO Users (Username, Firstname, Lastname, Email, HashedPassword) 
 VALUES 
 ('user1', 'John', 'Doe', 'john.doe@example.com', 'hashed_password_1'),
 ('user2', 'Jane', 'Smith', 'jane.smith@example.com', 'hashed_password_2'),
 ('user3', 'Alice', 'Johnson', 'alice.johnson@example.com', 'hashed_password_3');
 
-INSERT INTO GroceryLists (ListName, DateCreated) 
+INSERT INTO Products (ItemName) 
 VALUES 
-('Weekly Grocery', '2024-05-01 10:00:00'),
-('Monthly Shopping', '2024-04-15 08:30:00');
+('Apples'), 
+('Milk'),
+('Bread'), 
+('Eggs'),
+('Toilet Paper'),
+('Laundry Detergent'),
+('Shampoo'), 
+('Dish Soap');
 
-INSERT INTO Users_Lists (UserId, ListId) 
-VALUES 
-(1, 1),
-(2, 1),
-(2, 2),
-(3, 2);
 
-INSERT INTO ListItems (ItemName, ItemGotten, ListId) 
+GO 
+
+
+INSERT INTO GroceryLists (ListName, DateCreated, OwnerId) 
 VALUES 
-('Apples', 0, 1),
-('Milk', 1, 1),
-('Bread', 0, 1),
-('Eggs', 1, 1),
-('Toilet Paper', 0, 2),
-('Laundry Detergent', 1, 2),
-('Shampoo', 0, 2),
-('Dish Soap', 1, 2);
+('Weekly Grocery', '2024-05-01 10:00:00', 1),
+('Monthly Shopping', '2024-04-15 08:30:00', 2);
+GO
+
+INSERT INTO ListItems (ListId, ProductId, Quantity, ItemGotten) 
+VALUES 
+(1, 1, 1, 0),
+(2, 4, 1, 0),
+(2, 2, 1, 0),
+(1, 3, 1, 0);
+
+GO
