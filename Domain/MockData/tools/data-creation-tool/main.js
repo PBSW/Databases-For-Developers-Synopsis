@@ -1,8 +1,8 @@
-import { DataSetCreator } from "data-set-creator";
-import { JsonImporter } from "json-importer";
-const userPath = 'C:\\Users\\rouge\\OneDrive\\Desktop\\nutrition.csv';
-const productPath = 'C:\\Users\\rouge\\OneDrive\\Desktop\\nutrition.csv';
-const groceryListPath = 'C:\\Users\\rouge\\OneDrive\\Desktop\\nutrition.csv';
+import { JsonImporter } from "./json-importer.js";
+import { DataSetCreator } from "./data-set-creator.js";
+const userPath = 'dataset/USER_MOCK_DATA.json';
+const productPath = 'dataset/PRODUCT_MOCK_DATA.json';
+const groceryListPath = 'dataset/LIST_MOCK_DATA.json';
 const userImporter = new JsonImporter();
 const productImporter = new JsonImporter();
 const groceryListImporter = new JsonImporter();

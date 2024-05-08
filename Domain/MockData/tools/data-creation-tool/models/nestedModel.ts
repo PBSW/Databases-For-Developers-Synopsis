@@ -1,3 +1,5 @@
+import {GroceryListComplete} from "./models";
+
 export interface NestedModel {
     UserId: number
     Username: string
@@ -5,16 +7,5 @@ export interface NestedModel {
     Lastname: string
     Email: string
     HashedPassword: string
-    GroceryLists: [{
-        ListId: number
-        OwnerId: number
-        ListName: string
-        DateCreated: Date
-        Products: [{
-            ItemId: number
-            Quantity: number
-            ItemGotten: boolean
-            ItemName: string
-        }]
-    }]
+    GroceryLists: GroceryListComplete[]
 }

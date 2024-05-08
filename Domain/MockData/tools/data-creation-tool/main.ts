@@ -1,13 +1,16 @@
-import {DataSetCreator} from "./data-set-creator.js";
+
 import {GroceryList, Product, User} from "./models/models.js";
 import {JsonImporter} from "./json-importer.js";
+import {DataSetCreator} from "./data-set-creator.js";
 
 const userPath: string =
-    'C:\\Users\\rouge\\OneDrive\\Desktop\\nutrition.csv';
+    'dataset/USER_MOCK_DATA.json';
 const productPath: string =
-    'C:\\Users\\rouge\\OneDrive\\Desktop\\nutrition.csv';
+    'dataset/PRODUCT_MOCK_DATA.json';
 const groceryListPath: string =
-    'C:\\Users\\rouge\\OneDrive\\Desktop\\nutrition.csv';
+    'dataset/LIST_MOCK_DATA.json';
+
+
 
 const userImporter: JsonImporter<User> = new JsonImporter<User>();
 const productImporter: JsonImporter<Product> = new JsonImporter<Product>();
