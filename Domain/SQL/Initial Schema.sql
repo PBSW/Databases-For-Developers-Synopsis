@@ -1,6 +1,11 @@
 USE [master]
 GO
 
+IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'DFD_Synopsis')
+BEGIN
+    DROP DATABASE DFD_Synopsis;
+END
+
 CREATE DATABASE DFD_Synopsis
 GO
 
@@ -8,7 +13,7 @@ USE DFD_Synopsis
 GO
 
 CREATE TABLE Users (
-    UserId INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT PRIMARY KEY, --Need to manually add ID in Dataset. No IDENTITY(1,1)
     Username NVARCHAR(50) NOT NULL,
     Firstname NVARCHAR(50) NOT NULL,
     Lastname NVARCHAR(50) NOT NULL,
@@ -20,7 +25,7 @@ GO
 
 -- User has zero-to-many lists
 CREATE TABLE GroceryLists (
-    ListId INT IDENTITY(1,1) PRIMARY KEY,
+    ListId INT PRIMARY KEY, --Need to manually add ID in Dataset. No IDENTITY(1,1)
     ListName VARCHAR(60) NOT NULL,
     DateCreated DATETIME NOT NULL,
     OwnerId INT NOT NULL,
@@ -29,8 +34,8 @@ CREATE TABLE GroceryLists (
 
 
 CREATE TABLE Products (
-    ItemId INT IDENTITY(1,1) PRIMARY KEY,
-    ItemName VARCHAR(60) NOT NULL,
+    ProductId INT PRIMARY KEY, --Need to manually add ID in Dataset. No IDENTITY(1,1)
+    ProductName VARCHAR(100) NOT NULL,
 )
 
 GO
@@ -44,43 +49,8 @@ CREATE TABLE ListItems (
     Quantity INT NOT NULL,
     ItemGotten BIT NOT NULL,
     FOREIGN KEY (ListId) REFERENCES GroceryLists(ListId),
-    FOREIGN KEY (ProductId) REFERENCES Products(ItemId)
+    FOREIGN KEY (ProductId) REFERENCES Products(ProductId)
 )
 GO
 
 
-INSERT INTO Users (Username, Firstname, Lastname, Email, HashedPassword) 
-VALUES 
-('user1', 'John', 'Doe', 'john.doe@example.com', 'hashed_password_1'),
-('user2', 'Jane', 'Smith', 'jane.smith@example.com', 'hashed_password_2'),
-('user3', 'Alice', 'Johnson', 'alice.johnson@example.com', 'hashed_password_3');
-
-INSERT INTO Products (ItemName) 
-VALUES 
-('Apples'), 
-('Milk'),
-('Bread'), 
-('Eggs'),
-('Toilet Paper'),
-('Laundry Detergent'),
-('Shampoo'), 
-('Dish Soap');
-
-
-GO 
-
-
-INSERT INTO GroceryLists (ListName, DateCreated, OwnerId) 
-VALUES 
-('Weekly Grocery', '2024-05-01 10:00:00', 1),
-('Monthly Shopping', '2024-04-15 08:30:00', 2);
-GO
-
-INSERT INTO ListItems (ListId, ProductId, Quantity, ItemGotten) 
-VALUES 
-(1, 1, 1, 0),
-(2, 4, 1, 0),
-(2, 2, 1, 0),
-(1, 3, 1, 0);
-
-GO
