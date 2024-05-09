@@ -1,0 +1,14 @@
+To create a new database from a backup in SQL Server, you need to restore the backup file. Here's how you can do it using SQL Server Management Studio (SSMS):
+
+Connect to SQL Server: Open SSMS and connect to your SQL Server instance.
+Navigate to the Databases Node: Expand the Databases node in Object Explorer.
+Initiate Restore: Right-click on the "Databases" node, then select "Restore Database..." from the context menu.
+Specify Source: In the "General" page of the "Restore Database" window, specify the following:
+Source: Select "Device" and click the ellipsis (...) button to choose the backup file.
+Backup media type: Select "Disk".
+Backup file: Click "Add" to browse for and select the backup file (.bak) you want to restore from.
+Restore Options: After selecting the backup file, you can configure additional restore options such as the destination database name, file locations, and recovery state.
+Options: You can configure additional restore options in the "Options" page, such as overwriting existing database, preserving replication settings, and more.
+Initiate Restore: Once you've configured the restore options, click "OK" to start the restore process. You'll see a progress bar indicating the status of the restore operation.
+Verify Restore: After the restore completes successfully, verify that the new database is created and accessible in Object Explorer.
+By following these steps, you can create a new database from a backup in SQL Server using SSMS. Additionally, you can perform database restores using T-SQL scripts, which provide more flexibility and automation options.

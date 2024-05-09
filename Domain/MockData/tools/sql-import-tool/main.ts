@@ -1,11 +1,11 @@
 
 import {GroceryList, Product, User} from "./models/models.js";
 import * as fs from 'fs';
-//import * as sql from 'mssql';
-import * as _ from 'lodash';
 import {NestedModel} from "./models/nestedModel";
 import pkg from 'mssql';
+import _ from "lodash";
 const { Bit, Char, ConnectionPool, DateTime, Int, NVarChar, Transaction } = pkg;
+
 
 
 // Configuration for SQL Server connection
@@ -64,12 +64,17 @@ async function insertData(data: NestedModel[]): Promise<void> {
 
 
         const dbProducts: {ItemId: number, ItemName: string}[] = mapDbProducts(data)
+        console.log(dbProducts.length);
+
+        data = mapGroceryListDate(data);
+        data = removeDuplicateProductsFromList(data);
 
 
         // Respect foreign keys. Start by adding Users and products. Then lists. Then populate the many-to-many relation.
 
         //Start transaction
         const transaction = new Transaction(pool);
+        await transaction.begin();
 
         // Insert users
         for (const user of data) {
@@ -91,7 +96,7 @@ async function insertData(data: NestedModel[]): Promise<void> {
             await pool.request()
                 .input('ProductId', Int, product.ItemId)
                 .input('ProductName', NVarChar(100), product.ItemName)
-                .query('INSERT INTO Products (ItemId, ItemName) VALUES (@ItemId, @ItemName)');
+                .query('INSERT INTO Products (ProductId, ProductName) VALUES (@ProductId, @ProductName)');
         }
 
         //End transaction
@@ -100,6 +105,7 @@ async function insertData(data: NestedModel[]): Promise<void> {
 
         //Start transaction
         const transaction2 = new Transaction(pool);
+        await transaction2.begin();
         // Insert grocery lists
         for (const list of data) {
 
@@ -107,7 +113,7 @@ async function insertData(data: NestedModel[]): Promise<void> {
                 await pool.request()
                     .input('ListID', Int, groceryList.ListId)
                     .input('ListName', NVarChar(100), groceryList.ListName)
-                    .input('DateCreated', DateTime, groceryList.DateCreated.toISOString().slice(0, 19).replace('T', ' '))
+                    .input('DateCreated', DateTime, toSqlDateTime(groceryList.DateCreated))
                     .input('OwnerId', Int, list.UserId)
                     .query('INSERT INTO GroceryLists (ListID, ListName, DateCreated, OwnerId) VALUES (@ListID, @ListName, @DateCreated, @OwnerId)');
             }
@@ -117,6 +123,7 @@ async function insertData(data: NestedModel[]): Promise<void> {
 
         //Start transaction
         const transaction3 = new Transaction(pool);
+        await transaction3.begin();
 
         // ListItems - many-to-many relation
         for (const list of data) {
@@ -143,6 +150,38 @@ async function insertData(data: NestedModel[]): Promise<void> {
     }
 }
 
+function toSqlDateTime(date: Date): string {
+    return date.toISOString().slice(0, 19).replace('T', ' ');
+}
+
+function mapGroceryListDate(data: NestedModel[]): NestedModel[] {
+    const copy = _.cloneDeep<NestedModel[]>(data);
+
+    for (const user of copy) {
+        for (const groceryList of user.GroceryLists) {
+            groceryList.DateCreated = mapToDate(groceryList.DateCreated.toString());
+        }
+    }
+
+    return copy;
+}
+
+function removeDuplicateProductsFromList(data: NestedModel[]): NestedModel[] {
+    const copy = _.cloneDeep<NestedModel[]>(data);
+
+    for (const user of copy) {
+        for (const groceryList of user.GroceryLists) {
+            groceryList.Products = groceryList.Products.filter(
+                (product, index, self) => self.findIndex(p => p.ItemId === product.ItemId) === index);
+        }
+    }
+
+    return copy;
+}
+
+function mapToDate(date: string): Date {
+    return new Date(date);
+}
 
 function mapDbProducts(data: NestedModel[]): {ItemId: number, ItemName: string}[] {
     // copy array
@@ -158,6 +197,11 @@ function mapDbProducts(data: NestedModel[]): {ItemId: number, ItemName: string}[
             }
         }
     }
+
+    // remove duplicates
+
+    dbProducts = dbProducts.filter(
+        (product, index, self) => self.findIndex(p => p.ItemId === product.ItemId) === index);
 
     return dbProducts;
 }
