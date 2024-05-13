@@ -4,7 +4,7 @@ import _ from "lodash";
 const { Bit, Char, ConnectionPool, DateTime, Int, NVarChar, Transaction } = pkg;
 // Configuration for SQL Server connection
 const config = {
-    user: 'local',
+    user: 'localhost',
     password: '123456',
     server: 'localhost',
     database: 'DFD_Synopsis',
@@ -104,12 +104,17 @@ async function insertData(data) {
         for (const list of data) {
             for (const groceryList of list.GroceryLists) {
                 for (const product of groceryList.Products) {
+                    //Fix dates
+                    product.CreatedAt = mapToDate(product.CreatedAt.toString());
+                    product.ModifiedAt = mapToDate(product.ModifiedAt.toString());
                     await pool.request()
                         .input('ListId', Int, groceryList.ListId)
                         .input('ProductId', Int, product.ItemId)
                         .input('Quantity', Int, product.Quantity)
                         .input('ItemGotten', Bit, product.ItemGotten ? 1 : 0)
-                        .query('INSERT INTO ListItems (ListId, ProductId, Quantity, ItemGotten) VALUES (@ListID, @ProductId, @Quantity, @ItemGotten)');
+                        .input('CreatedAt', DateTime, toSqlDateTime(product.CreatedAt))
+                        .input('ModifiedAt', DateTime, toSqlDateTime(product.ModifiedAt))
+                        .query('INSERT INTO ListItems (ListId, ProductId, Quantity, ItemGotten, CreatedAt, ModifiedAt) VALUES (@ListID, @ProductId, @Quantity, @ItemGotten, @CreatedAt, @ModifiedAt)');
                 }
             }
         }

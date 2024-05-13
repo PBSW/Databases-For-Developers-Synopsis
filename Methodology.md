@@ -24,9 +24,6 @@ This will not be an apples-to-apples comparison, but there simply is not a bench
 ## Test cases
 Test cases for queries that could be used in a real world application
 
-### Retrieve user 
-- Test a single table getting a single value. 
-
 ### Retrieve all lists for a given user
 - Test one-to-many retrieval.
 
@@ -34,7 +31,11 @@ Test cases for queries that could be used in a real world application
 - Test many-to-many retrieval.
 
 
-### All items a user has on an existing grocery list
+### All items a user has on an existing grocery list that they haven't gotten
+
+
+
+
 
 
 

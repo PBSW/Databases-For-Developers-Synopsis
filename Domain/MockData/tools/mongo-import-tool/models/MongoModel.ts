@@ -21,4 +21,6 @@ export interface MongoModelProduct {
     productName: string
     productGotten: boolean
     quantity: number
+    createdAt: Date
+    modifiedAt: Date
 }

@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import _ from "lodash";
 import { MongoClient } from "mongodb";
 // MongoDB connection URI
-const uri = 'mongodb://localhost:27017';
+const uri = 'mongodb://127.0.0.1:27017/';
 const client = new MongoClient(uri);
 var Keys;
 (function (Keys) {
@@ -100,7 +100,9 @@ async function mapMongoModel(data) {
                     productId: product.ItemId,
                     productName: product.ItemName,
                     productGotten: product.ItemGotten,
-                    quantity: product.Quantity
+                    quantity: product.Quantity,
+                    createdAt: mapToDate(product.CreatedAt.toString()),
+                    modifiedAt: mapToDate(product.ModifiedAt.toString())
                 });
             }
             groceryLists.push({

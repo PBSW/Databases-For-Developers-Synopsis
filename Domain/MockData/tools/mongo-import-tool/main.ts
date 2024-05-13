@@ -4,11 +4,11 @@ import * as fs from 'fs';
 import {NestedModel} from "./models/nestedModel";
 import _ from "lodash";
 import {MongoClient} from "mongodb";
-import {MongoModel} from "./models/MongoModel.js";
+import {MongoModel, MongoModelProduct} from "./models/MongoModel.js";
 
 
 // MongoDB connection URI
-const uri = 'mongodb://localhost:27017';
+const uri = 'mongodb://127.0.0.1:27017/';
 const client = new MongoClient(uri);
 
 
@@ -125,14 +125,16 @@ for (const user of copy) {
         const groceryLists = [];
 
         for (const groceryList of user.GroceryLists) {
-            const products = [];
+            const products: MongoModelProduct[] = [];
 
             for (const product of groceryList.Products) {
                 products.push({
                     productId: product.ItemId,
                     productName: product.ItemName,
                     productGotten: product.ItemGotten,
-                    quantity: product.Quantity
+                    quantity: product.Quantity,
+                    createdAt: mapToDate(product.CreatedAt.toString()),
+                    modifiedAt: mapToDate(product.ModifiedAt.toString())
                 });
             }
 

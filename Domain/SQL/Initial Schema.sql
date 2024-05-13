@@ -60,6 +60,8 @@ CREATE TABLE ListItems (
     ProductId INT NOT NULL,
     Quantity INT NOT NULL,
     ItemGotten BIT NOT NULL,
+    CreatedAt DATETIME NOT NULL,
+    ModifiedAt DATETIME NOT NULL,
     FOREIGN KEY (ListId) REFERENCES GroceryLists(ListId),
     FOREIGN KEY (ProductId) REFERENCES Products(ProductId)
 )

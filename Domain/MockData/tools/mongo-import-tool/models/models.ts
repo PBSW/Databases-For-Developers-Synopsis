@@ -18,6 +18,8 @@ export interface ProductComplete {
     ItemName: string
     ItemGotten: boolean
     Quantity: number
+    CreatedAt: Date
+    ModifiedAt: Date
 }
 
 export interface GroceryList {

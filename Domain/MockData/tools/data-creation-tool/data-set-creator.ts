@@ -77,7 +77,7 @@ export class DataSetCreator {
         let lists: GroceryListComplete[] = [];
         const count = this.getRandomNumber(1, 5);
         const from = "2024-05-01T00:00:00.000Z";
-        const to = "2023-05-01T00:00:00.000Z"
+        const to = "2023-05-13T00:00:00.000Z";
 
         const maxIndex = this.groceryLists.length - 1;
 
@@ -88,7 +88,25 @@ export class DataSetCreator {
             const ownerId = user.UserId;
 
             //Insert some random products. Remember to randomize quantity and itemGotten
-            const randomProducts: ProductComplete[] = this._getRandomProducts()
+            let randomProducts: ProductComplete[] = this._getRandomProducts()
+
+            //CreatedAt and UpdatedAt for products
+            randomProducts.forEach(
+                value => {
+                    const lowDate = this.generateRandomDate(date.toISOString(), to)
+                    const highDate = this.generateRandomDate(lowDate.toISOString(), to)
+
+                    //Set created at to be the lowest of the two
+                    let createdDate = lowDate < highDate ? lowDate : highDate
+                    value.CreatedAt = createdDate
+
+                    //Set modified at to be the highest of the two
+                    let modifiedDate = lowDate > highDate ? lowDate : highDate
+                    value.ModifiedAt = modifiedDate
+
+                }
+            )
+
 
             lists.push({
                 ListId: id,
@@ -116,7 +134,9 @@ export class DataSetCreator {
                 ItemId: item.ItemId,
                 ItemName: item.ItemName,
                 Quantity: this.getRandomNumber(1, 6),
-                ItemGotten: this.getRandomBoolean()
+                ItemGotten: this.getRandomBoolean(),
+                CreatedAt: new Date(),
+                ModifiedAt: new Date()
             }
             products.push(productComplete)
         }
