@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  mssql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-server
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1434:1433"   # Map container port 1433 to host port 1434
+    volumes:
+      - mssql_data:/var/opt/mssql
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'    # Limit to 0.5 CPU core
+          memory: 512M   # Limit to 512MB memory
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27018:27017"  # Map container port 27017 to host port 27018
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'    # Limit to 0.5 CPU core
+          memory: 512M   # Limit to 512MB memory
+
+networks:
+  backend:
+
+volumes:
+  mssql_data:
+  mongodb_data:
