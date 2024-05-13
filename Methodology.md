@@ -30,7 +30,6 @@ Test cases for queries that could be used in a real world application
 ### Retrieve an entire list with all it's items.
 - Test many-to-many retrieval.
 
-
 ### All items a user has on an existing grocery list that they haven't gotten
 
 
