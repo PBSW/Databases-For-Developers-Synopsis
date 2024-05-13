@@ -5,6 +5,7 @@ export class JsonImporter {
         this.jsonData1 = {};
     }
     async getJSONData(path) {
+        console.log("path:", path);
         return await this.importJSONData(path);
     }
     async importJSONData(path) {

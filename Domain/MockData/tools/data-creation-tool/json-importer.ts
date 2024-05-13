@@ -9,6 +9,7 @@ export class JsonImporter<T> {
     }
 
     public async getJSONData(path: string): Promise<T[]>  {
+        console.log("path:", path)
         return await this.importJSONData(path) as Promise<T[]>;
     }
 

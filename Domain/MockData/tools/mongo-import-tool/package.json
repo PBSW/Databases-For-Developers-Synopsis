@@ -1,0 +1,19 @@
+{
+  "name": "mongo-import-tool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/lodash": "^4.17.1",
+    "@types/node": "^20.12.10",
+    "lodash": "^4.17.21",
+    "mongodb": "^6.6.1",
+    "typescript": "^5.0.4"
+  }
+}
