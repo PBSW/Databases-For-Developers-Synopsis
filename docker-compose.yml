@@ -1,11 +1,18 @@
 version: '3.9'
 
 services:
-  mssql-server:
+#Server connection: 127.0.0.1\mssql-server,1434
+#User: sa
+#Pass: !123456Aab
+
+  mssql-server: 
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mssql-server
+    hostname: dfd-sql
+    user: '0:0'
     environment:
-      SA_PASSWORD: "YourStrong!Passw0rd"
+      SA_PASSWORD: '!123456Aab'
+      MSSQL_SA_PASSWORD: '!123456Aab'
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
     ports:
@@ -18,9 +25,9 @@ services:
       resources:
         limits:
           cpus: '0.5'    # Limit to 0.5 CPU core
-          memory: 512M   # Limit to 512MB memory
+          memory: 2G   # Limit to 512MB memory
 
-  mongodb:
+  mongodb: # Conn: mongodb://localhost:27018
     image: mongo:latest
     container_name: mongodb
     ports:
@@ -33,7 +40,7 @@ services:
       resources:
         limits:
           cpus: '0.5'    # Limit to 0.5 CPU core
-          memory: 512M   # Limit to 512MB memory
+          memory: 2G   # Limit to 512MB memory
 
 networks:
   backend:

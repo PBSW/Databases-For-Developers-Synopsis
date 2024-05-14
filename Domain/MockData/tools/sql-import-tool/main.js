@@ -1,14 +1,17 @@
 import * as fs from 'fs';
 import pkg from 'mssql';
 import _ from "lodash";
+import { SchemaCreator } from "./schema-creator.js";
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
 const { Bit, Char, ConnectionPool, DateTime, Int, NVarChar, Transaction } = pkg;
 // Configuration for SQL Server connection
 const config = {
-    user: 'localhost',
-    password: '123456',
-    server: 'localhost',
+    user: 'sa',
+    password: '!123456Aab',
+    server: '127.0.0.1/mssql-server',
     database: 'DFD_Synopsis',
-    port: 1433,
+    port: 1434,
     pool: {
         max: 10,
         min: 0,
@@ -53,6 +56,8 @@ async function readJSONFile(filename) {
 async function insertData(data) {
     try {
         const pool = await connectToDatabase();
+        // Create schema
+        await createSchema(pool);
         const dbProducts = mapDbProducts(data);
         console.log(dbProducts.length);
         data = mapGroceryListDate(data);
@@ -149,6 +154,19 @@ function removeDuplicateProductsFromList(data) {
     }
     return copy;
 }
+async function createSchema(pool) {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const schemaPath = path.join(__dirname, 'input/schema.sql');
+    //Read schema file
+    const schema = fs.readFileSync(schemaPath, 'utf8');
+    //Execute schema
+    await pool.batch(schema);
+    // Add constraints
+    const constraintsPath = path.join(__dirname, 'input/constraints.sql');
+    const constraints = fs.readFileSync(constraintsPath, 'utf8');
+    await pool.batch(constraints);
+}
 function mapToDate(date) {
     return new Date(date);
 }
@@ -171,8 +189,12 @@ function mapDbProducts(data) {
 // Main function
 async function main() {
     try {
+        // Create schema
+        await SchemaCreator.createSchema();
+        // Read file and import data
         const filename = 'input/DATA.json'; // Path to your JSON file
         const data = await readJSONFile(filename);
+        // Insert data into SQL Server
         await insertData(data);
     }
     catch (err) {
