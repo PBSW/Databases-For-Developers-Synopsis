@@ -8,7 +8,7 @@ import {MongoModel, MongoModelProduct} from "./models/MongoModel.js";
 
 
 // MongoDB connection URI
-const uri = 'mongodb://127.0.0.1:27017/';
+const uri = 'mongodb://127.0.0.1:27018/';
 const client = new MongoClient(uri);
 
 

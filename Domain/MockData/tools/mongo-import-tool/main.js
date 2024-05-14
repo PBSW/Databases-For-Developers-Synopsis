@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import _ from "lodash";
 import { MongoClient } from "mongodb";
 // MongoDB connection URI
-const uri = 'mongodb://127.0.0.1:27017/';
+const uri = 'mongodb://127.0.0.1:27018/';
 const client = new MongoClient(uri);
 var Keys;
 (function (Keys) {
