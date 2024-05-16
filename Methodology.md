@@ -39,4 +39,7 @@ Test cases for queries that could be used in a real world application
 
 # Optimization
 
-
+## Indexing
+The primary keys are automatically indexed. Based on the test cases designed the ideal additional indexes that make sense would be to index both OwnerId from the GroceryList table and ItemGotten from the ListItems table. These are specifically queried, and while OwnerId is a foreign key to the Users.UserId field, Test case 2 does not have a JOIN for the Users table.
+If one of the test cases was searching for a product in the Products table (which is very likely as the schema is designed to share a dataset of products among users), indexing the ProductName would have been ideal.
+Likewise, indexing the Username for the Users table would have been ideal if a test case had included fetching login credentials.
