@@ -4,11 +4,10 @@ csv_dataset = 'https://files.mbarth.dk/datasets/SpotifyCharts/split.csv.zip'
 json_dataset = 'https://files.mbarth.dk/datasets/SpotifyCharts/split.json.zip'
 sql_backup = ''
 
-option_get_csv = True
-option_get_json = True
+option_get_csv = False
+option_get_json = False
 option_get_sql = False
 
-option_unpack_zip = False
 option_outdir = '../data/'
 
 import os
@@ -31,18 +30,19 @@ def download_file(url):
         with open(local_filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192):
                 read_count += 8192
-                msg = f" {filename:25} Downloading {(read_count / (abs(int(content_length)) + 1))*100:3.0f}%"
+                percentage = (read_count / (abs(int(content_length)) + 1))*100
+                msg = f" Downloading '{filename}' - {percentage:2.0f}%"
                 print(msg + " " * 100, end='\r\r')
                 sys.stdout.flush()
                 f.write(chunk) 
-            print(f" {filename:25} Downloaded" + " " * 100 , end='\n')
+            print(f"Downloading '{filename}' - Finished" + " " * 100 , end='\n')
             
     return local_filename
 
-
-if option_get_csv:
-    download_file(csv_dataset)
-if option_get_json:
-    download_file(json_dataset)
-if option_get_sql:
-    download_file(sql_backup)
+if __name__ == "__main__":
+    if option_get_csv:
+        download_file(csv_dataset)
+    if option_get_json:
+        download_file(json_dataset)
+    if option_get_sql:
+        download_file(sql_backup)
