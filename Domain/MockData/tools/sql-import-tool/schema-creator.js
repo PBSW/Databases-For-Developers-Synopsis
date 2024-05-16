@@ -16,11 +16,11 @@ const masterConfig = {
         idleTimeoutMillis: 30000
     },
     options: {
-        encrypt: true, // If you're using Azure, set to true
+        encrypt: true,
         trustServerCertificate: true // If you're using Azure, set to true
     }
 };
-export class SchemaCreator {
+class SchemaCreator {
     static schemaPath = "input/db_creation.sql";
     static async connectToDatabase() {
         try {
@@ -54,3 +54,4 @@ export class SchemaCreator {
         await pool.close();
     }
 }
+export { SchemaCreator };
