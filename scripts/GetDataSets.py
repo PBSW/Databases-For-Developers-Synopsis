@@ -31,7 +31,7 @@ def download_file(url):
         with open(local_filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192):
                 read_count += 8192
-                msg = f" {filename:25} Downloading {(read_count / int(content_length))*100:3.0f}%"
+                msg = f" {filename:25} Downloading {(read_count / (abs(int(content_length)) + 1))*100:3.0f}%"
                 print(msg + " " * 100, end='\r\r')
                 sys.stdout.flush()
                 f.write(chunk) 
