@@ -49,14 +49,32 @@ def unpack_zip(retry = True) -> list[str]:
     except:
         os.remove(os.path.join(dirname, 'split.csv.zip'))
         if retry:
-            return unpack_zip(False)            
+            return unpack_zip(False)
 
 files = unpack_zip()
 
 for file in files:
     pass
     #print(file)
-    
+
+
+from urllib import parse
+import sqlalchemy
+
+server = 'localhost:1434'
+username = 'sa' 
+password = '!123456Aab' 
+
+params = parse.quote_plus(f"")
+engine = sqlalchemy.create_engine(f'mssql+pymssql://{username}:{password}@{server}')
+
+connection = engine.connect()
+
+rs = connection.exec_driver_sql('select * from dbo.MSreplication_options')
+for row in rs:
+    print(row)
+connection.close()
+
 sql_insert_data = """
 -- import the file
 BULK INSERT dbo.SpotifyDataset
@@ -69,7 +87,7 @@ WITH
 GO
 """
 
-sql_create = """
+sql_table_reset = """
 -- create table
 CREATE TABLE IF NOT EXIST dbo.SpotifyDataset
 GO 
