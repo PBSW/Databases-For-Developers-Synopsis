@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 
+# original source: https://www.kaggle.com/datasets/sunnykakar/spotify-charts-all-audio-data/data
 csv_dataset = 'https://files.mbarth.dk/datasets/SpotifyCharts/split.csv.zip'
 json_dataset = 'https://files.mbarth.dk/datasets/SpotifyCharts/split.json.zip'
 sql_backup = ''
