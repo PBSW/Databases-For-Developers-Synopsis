@@ -113,15 +113,40 @@ def unpack_zip(retry = True) -> list[str]:
 def main():
     files = unpack_zip()
     convert(os.path.join(dirname, 'csv'), files)
-    return
     engine = sqlalchemy.create_engine(f'mssql+pymssql://sa:!123456Aab@localhost:1434', connect_args = {'autocommit':True})
 
     with engine.connect() as connection:
         connection.exec_driver_sql(sql_snippets.sql_create_db)
         connection.exec_driver_sql(sql_snippets.sql_create_base_table)
-
+        connection.commit()
+        
         for file in files:
-            connection.exec_driver_sql(sql_snippets.sql_insert_data.format(f"/var/home/data/{file}"))
+            path = os.path.join(dirname, 'csv', file)
+            lines : list[str] = []
+            header : str
+            with open(path, mode="r", encoding='utf-8') as handle:
+                header = handle.readline()[:-1] # remove line ending char
+                lines = handle.readlines()
+            
+            # 100_000 comes from splitting the csv into multiple files as the target line count per file (ex. header)
+            # 2500 is the target operation count for each transaction
+            batch_count = int(100_000 / 2500) 
+            line_count = lines.__len__()
+            batch_size = int(line_count / batch_count)
+            remaining = int(line_count % batch_count)
+            assert line_count == (batch_size * batch_count) + remaining
+
+            # run a transaction for each batch 
+            for batch_idx in range(batch_count):
+                batch_stride = batch_idx * batch_size
+                with connection.begin():
+                    for index in range(batch_size):
+                        values = lines[batch_stride + index][:-1].split(',') # remove line ending char
+                        # todo: ensure quoutes around the elements in values (unless it is in a numeric format)
+                        connection.exec_driver_sql(f"INSERT INTO BaseTable ({header}) VALUES ({','.join(values)})")
+
+            return
+
 
 if __name__ == "__main__":
     main()
