@@ -4,6 +4,7 @@
 import csv
 from decimal import Decimal
 import os
+import sys
 
 import sqlalchemy.orm
 import sqlalchemy.orm.collections
@@ -12,15 +13,8 @@ import GetDataSets
 from zipfile import ZipFile 
 import sqlalchemy
 import sql_snippets
-from typing import List
-from typing import Optional
-from sqlalchemy import ForeignKey, insert
-from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-from sqlalchemy import Numeric, Column, Integer, Table, Unicode
 from sqlalchemy.orm import sessionmaker
 
 files: list[str]
@@ -73,7 +67,7 @@ def unpack_zip(retry = True) -> list[str]:
 
 def get_data_from_csv(file) :
     path = os.path.join(dirname, 'csv', file) 
-    with open(path, mode="r") as handle:
+    with open(path, mode="r", encoding="utf8") as handle:
         reader = csv.reader(handle)
         headers = next(reader)
         
@@ -108,9 +102,13 @@ def get_data_from_csv(file) :
             data[index] = props
         return data
 
+if sys.platform == 'Linux':
+    connection_string = 'mssql+pymssql://sa:!123456Aab@127.0.0.1:1434'
+else:
+    connection_string = "mssql+pyodbc:///?odbc_connect=DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1434;UID=sa;PWD=!123456Aab;TrustServerCertificate=yes;"
 
-engine = sqlalchemy.create_engine(f'mssql+pymssql://sa:!123456Aab@localhost:1434', connect_args = {'autocommit':True}, insertmanyvalues_page_size=500, use_insertmanyvalues=True)
-
+engine = sqlalchemy.create_engine(connection_string, connect_args = {'autocommit':True})
+     
 Base = sqlalchemy.orm.declarative_base()
 Base.metadata.create_all(engine)
 SessionMaker = sessionmaker(bind=engine)
@@ -222,7 +220,7 @@ def main():
             session.commit()
         
         if (remaining != 0):
-            session.add_all(mapped[batch_size+batch_count:])
+            session.add_all(mapped[batch_size*batch_count:])
             session.commit()
     
     session.close_all()

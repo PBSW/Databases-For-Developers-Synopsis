@@ -6,7 +6,7 @@ services:
 #Pass: !123456Aab
 
   mssql-server:
-    image: mcr.microsoft.com/mssql/server:2019-latest # use version 2019 (other versions as of 17/5/2024 has a problem with linux kernel 6.7.x)
+    image: mcr.microsoft.com/mssql/server:2022-latest # use version 2019 (other versions as of 17/5/2024 has a problem with linux kernel 6.7.x)
     container_name: mssql-server
     hostname: dfd-sql
     user: 'root'
@@ -22,11 +22,11 @@ services:
       - './data/csv/:/var/home/data/'
     networks:
       - backend
-    deploy:
-      resources:
-        limits:
-          cpus: '4'    # Limit to 0.5 CPU core
-          memory: 6G   # Limit to 512MB memory
+    #deploy:
+     # resources:
+     #   limits:
+     #     cpus: '4'    # Limit to 0.5 CPU core
+     #     memory: 6G   # Limit to 512MB memory
 
   mongodb: # Conn: mongodb://localhost:27018
     image: mongo:latest
