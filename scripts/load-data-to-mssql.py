@@ -65,6 +65,20 @@ def unpack_zip(retry = True) -> list[str]:
         else:
             raise "FAILED TO UNPACK THE DATASET - possible reasons include: no remote zipfile, corrupted zipfile"
 
+def is_float(v):
+    try:
+        float(v)
+        return True
+    except:
+        return False
+
+def is_decimal(v):
+    try:
+        Decimal(v)
+        return True
+    except:
+        return False
+
 def get_data_from_csv(file) :
     path = os.path.join(dirname, 'csv', file) 
     with open(path, mode="r", encoding="utf8") as handle:
@@ -89,6 +103,10 @@ def get_data_from_csv(file) :
                     if value.endswith('\'') or value.endswith('\"'):
                         value = value[:-1]
                     if value.isnumeric():
+                        value = int(value)
+                    elif is_float(value):
+                        value = float(value)
+                    elif is_decimal(value):
                         value = Decimal(value)
                     else:
                         value = None
