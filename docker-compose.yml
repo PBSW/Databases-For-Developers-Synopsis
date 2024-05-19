@@ -5,7 +5,7 @@ services:
 #User: sa
 #Pass: !123456Aab
 
-  mssql-server: 
+  mssql-server:
     image: mcr.microsoft.com/mssql/server:2019-latest # use version 2019 (other versions as of 17/5/2024 has a problem with linux kernel 6.7.x)
     container_name: mssql-server
     hostname: dfd-sql
@@ -25,8 +25,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.1'    # Limit to 0.5 CPU core
-          memory: 2G   # Limit to 512MB memory
+          cpus: '4'    # Limit to 0.5 CPU core
+          memory: 6G   # Limit to 512MB memory
 
   mongodb: # Conn: mongodb://localhost:27018
     image: mongo:latest
