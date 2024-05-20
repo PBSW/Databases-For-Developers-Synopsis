@@ -1,0 +1,7 @@
+SQLAlchemy==2.0.29
+mssql==1.0.1
+pymssql==2.2.11
+sqlparams==6.0.1
+pyodbc==5.0.0
+pyjdbc==0.2.2
+urllib3==1.26.18
