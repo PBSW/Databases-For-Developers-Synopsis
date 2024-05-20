@@ -206,7 +206,7 @@ def convert_to_mapped_objects(filename, data: list[dict[str, str]]) -> list[NewT
     return objects
     
         
-
+# backup SpotifyDataset_base_mssql_backup stopped at file_9073.csv (~16M rows)
 def main():
     files = unpack_zip()
     #convert(os.path.join(dirname, 'csv'), files)
