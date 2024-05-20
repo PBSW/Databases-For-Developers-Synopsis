@@ -1,59 +1,7 @@
-
-sql_create_db = """
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'SpotifyDataset')
-BEGIN
-  CREATE DATABASE SpotifyDataset;
-END
-"""
-
-sql_create_base_table = """
 USE [SpotifyDataset];
 
-IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'BaseTable' AND type = 'U')
-BEGIN
-    DROP TABLE BaseTable 
-END;
-
-CREATE TABLE BaseTable (
-    id INT PRIMARY KEY,
-    title NVARCHAR(MAX),
-    rank INT,
-    date NVARCHAR(MAX),
-    artist NVARCHAR(MAX),
-    url NVARCHAR(MAX),
-    region NVARCHAR(MAX),
-    chart NVARCHAR(MAX),
-    trend NVARCHAR(MAX),
-    streams DECIMAL,
-    track_id NVARCHAR(MAX),
-    album NVARCHAR(MAX),
-    popularity DECIMAL,
-    duration_ms DECIMAL,
-    explicit NVARCHAR(MAX),
-    release_date NVARCHAR(MAX),
-    available_markets NVARCHAR(MAX),
-    af_danceability DECIMAL,
-    af_energy DECIMAL,
-    af_key DECIMAL,
-    af_loudness DECIMAL,
-    af_mode DECIMAL,
-    af_speechiness DECIMAL,
-    af_acousticness DECIMAL,
-    af_instrumentalness DECIMAL,
-    af_liveness DECIMAL,
-    af_valence DECIMAL,
-    af_tempo DECIMAL,
-    af_time_signature DECIMAL
-);
-"""
-
-sql0_delete_non_unicode_entries = """
-DELETE FROM [SpotifyDataset].[dbo].[BaseTable]
+DELETE FROM [BaseTable]
 where artist LIKE '%??%'
-"""
-
-sql1_create_region_table = """
-USE [SpotifyDataset];
 
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Regions' AND type = 'U')
 BEGIN
@@ -67,10 +15,6 @@ CREATE TABLE Regions (
 
 INSERT INTO Regions
 SELECT DISTINCT region FROM BaseTable
-"""
-
-sql2_create_artist_table = """
-USE [SpotifyDataset];
 
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Artists' AND type = 'U')
 BEGIN
@@ -85,10 +29,7 @@ CREATE TABLE Artists (
 INSERT INTO Artists
 SELECT DISTINCT LTRIM(RTRIM(value)) as artist FROM BaseTable
 	CROSS APPLY STRING_SPLIT(artist, ',')
-"""
 
-sql3_create_charts_table = """
-USE [SpotifyDataset];
 
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Charts' AND type = 'U')
 BEGIN
@@ -102,10 +43,7 @@ CREATE TABLE Charts (
 
 INSERT INTO Charts
 SELECT DISTINCT chart FROM BaseTable
-"""
 
-sql4_create_trends_table = """
-USE [SpotifyDataset];
 
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Trends' AND type = 'U')
 BEGIN
@@ -119,19 +57,14 @@ CREATE TABLE Trends (
 
 INSERT INTO Trends
 SELECT DISTINCT trend FROM BaseTable
-"""
-
-sql5_update_release_date_to_conform_to_DATE = """
-USE [SpotifyDataset];
 
 UPDATE [SpotifyDataset].[dbo].[BaseTable] SET release_date = CONCAT(release_date, '-01-01')
 where len(release_date) = 4 
 
 UPDATE [SpotifyDataset].[dbo].[BaseTable] SET release_date = CONCAT(release_date, '-01')
 where len(release_date) = 7 
-"""
 
-sql6_create_song_details_table = """
+
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'SongDetails' AND type = 'U')
 BEGIN
     DROP TABLE SongDetails 
@@ -152,10 +85,6 @@ CREATE TABLE SongDetails (
     af_tempo DECIMAL,
     af_time_signature DECIMAL
 );
-"""
-
-sql7_create_available_markets_table = """
-USE [SpotifyDataset];
 
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'AvailableMarkets' AND type = 'U')
 BEGIN
@@ -175,10 +104,6 @@ SELECT SUBSTRING(distinct_market, 2, len(distinct_market)-2) as market FROM (
 	) AS _TMP0
 	WHERE list LIKE '%,%'
 ) AS _TMP1
-"""
-
-sql8_create_songs_table = """
-USE [SpotifyDataset];
 
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Songs' AND type = 'U')
 BEGIN
@@ -212,9 +137,7 @@ ALTER TABLE Songs
 ADD CONSTRAINT fk_TrendId_Trends FOREIGN KEY (TrendId) REFERENCES Trends(id)
 ALTER TABLE Songs
 ADD CONSTRAINT fk_DetailsId_SongDetails FOREIGN KEY (DetailsId) REFERENCES SongDetails (id)
-"""
 
-sql9_create_song_artist_table = """
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'SongArtists' AND type = 'U')
 BEGIN
     DROP TABLE SongArtists
@@ -230,10 +153,8 @@ ALTER TABLE SongArtists
 ADD CONSTRAINT fk_SongArtists_SongId_Artists FOREIGN KEY (ArtistId) REFERENCES [SpotifyDataset].[dbo].Artists (id)
 ALTER TABLE SongArtists
 ADD CONSTRAINT fk_SongArtists_ArtistId_Songs FOREIGN KEY (SongId) REFERENCES [SpotifyDataset].[dbo].Songs (id)
-"""
 
-sql_10_many_to_many_binding = """
-USE [SpotifyDataset];
+
 
 ALTER TABLE Songs
 ADD SourceID INT
@@ -297,4 +218,3 @@ GO
 ALTER TABLE SongDetails
 DROP COLUMN SourceID
 GO
-"""

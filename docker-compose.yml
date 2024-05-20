@@ -19,7 +19,7 @@ services:
       - "1434:1433"   # Map container port 1433 to host port 1434
     volumes:
       - mssql_data:/var/opt/mssql/
-      - './data/csv/:/var/home/data/'
+      - './data:/var/home/data/'
     networks:
       - backend
     #deploy:
