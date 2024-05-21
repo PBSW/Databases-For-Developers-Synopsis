@@ -119,7 +119,7 @@ CREATE TABLE Songs (
     RegionId INT,
     ChartId INT,
     TrendId INT,
-    streams INT,
+    streams BIGINT,
     Track NVARCHAR(128),
     Album NVARCHAR(512),
     Popularity INT,
@@ -181,7 +181,7 @@ INSERT INTO SongDetails
 	FROM BaseTable AS tbl
 
 SET DATEFORMAT ymd;
-INSERT INTO Songs 
+INSERT INTO Songs
 	SELECT
 		tbl.title AS Title, 
 		tbl.[rank] as [Rank], 
@@ -200,6 +200,14 @@ INSERT INTO Songs
 		(SELECT TOP(1) id FROM SongDetails AS tmp_details WHERE tmp_details.SourceId = tbl.id) as DetailsId,
 		tbl.id as SourceID -- keep original reference for updating other tables
 	FROM BaseTable AS tbl
+
+UPDATE Songs
+SET streams = 0
+WHERE streams IS NULL
+
+UPDATE Songs
+SET Popularity = 0
+WHERE Popularity IS NULL
 
 INSERT INTO SongArtists
 SELECT SongId, ArtistId FROM (

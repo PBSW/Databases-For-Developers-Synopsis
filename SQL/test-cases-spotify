@@ -1,0 +1,14 @@
+
+1: 
+    get all songs where an artist is a participant (orderby rank ?)
+        - search by id
+        . search by name
+
+2:  
+    search for a song by title/album grouped by the artists (orderby rank ?)
+
+3. 
+    get popular songs (order by popularity, streams, ReleaseDate) where Trend is not MOVE_DOWN
+
+4.
+ ??? get similar songs (SongDetails, ) 
