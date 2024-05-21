@@ -3,19 +3,6 @@ USE [SpotifyDataset];
 DELETE FROM [BaseTable]
 where artist LIKE '%??%'
 
-IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Regions' AND type = 'U')
-BEGIN
-    DROP TABLE Regions 
-END;
-
-CREATE TABLE Regions (
-	id INT PRIMARY KEY IDENTITY(1, 1),
-	region NVARCHAR(128)
-);
-
-INSERT INTO Regions
-SELECT DISTINCT region FROM BaseTable
-
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Artists' AND type = 'U')
 BEGIN
     DROP TABLE Artists 
@@ -86,24 +73,6 @@ CREATE TABLE SongDetails (
     af_time_signature DECIMAL
 );
 
-IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'AvailableMarkets' AND type = 'U')
-BEGIN
-    DROP TABLE AvailableMarkets 
-END;
-
-CREATE TABLE AvailableMarkets (
-	id INT PRIMARY KEY IDENTITY(1, 1),
-	market NVARCHAR(2)
-);
-
-INSERT INTO AvailableMarkets
-SELECT SUBSTRING(distinct_market, 2, len(distinct_market)-2) as market FROM (
-	SELECT DISTINCT SUBSTRING(list + ',', 1, CHARINDEX(',', list)-1) AS distinct_market  FROM (
-		SELECT SUBSTRING(available_markets, 2, len(available_markets)-2) AS list
-		FROM BaseTable
-	) AS _TMP0
-	WHERE list LIKE '%,%'
-) AS _TMP1
 
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Songs' AND type = 'U')
 BEGIN
@@ -116,7 +85,6 @@ CREATE TABLE Songs (
     [Rank] INT,
     [Date] DATE,
     [Url] NVARCHAR(255),
-    RegionId INT,
     ChartId INT,
     TrendId INT,
     streams BIGINT,
@@ -129,8 +97,6 @@ CREATE TABLE Songs (
     DetailsId INT,
 );
 
-ALTER TABLE Songs
-ADD CONSTRAINT fk_RegionId_Regions FOREIGN KEY (RegionId) REFERENCES [SpotifyDataset].[dbo].[Regions] (id)
 ALTER TABLE Songs
 ADD CONSTRAINT fk_ChartId_Charts FOREIGN KEY (ChartId) REFERENCES [SpotifyDataset].[dbo].[Charts] (id)
 ALTER TABLE Songs
@@ -185,7 +151,6 @@ INSERT INTO Songs
 		tbl.[rank] as [Rank], 
 		TRY_CONVERT(DATE, tbl.[date]) AS [Date], -- NULLS are fine if source date is invalid format (UNKNOWN)
 		tbl.[url] AS [Url],
-		(SELECT TOP(1) id FROM Regions AS tmp_reg WHERE tmp_reg.region = tbl.region) as RegionId,
 		(SELECT TOP(1) id FROM Charts AS tmp_chart WHERE tmp_chart.chart = tbl.chart) as ChartId,
 		(SELECT TOP(1) id FROM Trends AS tmp_trend WHERE tmp_trend.trend = tbl.trend) as TrendId,
 		tbl.streams AS streams,
