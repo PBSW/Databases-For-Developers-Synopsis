@@ -134,9 +134,9 @@ ADD CONSTRAINT fk_RegionId_Regions FOREIGN KEY (RegionId) REFERENCES [SpotifyDat
 ALTER TABLE Songs
 ADD CONSTRAINT fk_ChartId_Charts FOREIGN KEY (ChartId) REFERENCES [SpotifyDataset].[dbo].[Charts] (id)
 ALTER TABLE Songs
-ADD CONSTRAINT fk_TrendId_Trends FOREIGN KEY (TrendId) REFERENCES Trends(id)
+ADD CONSTRAINT fk_TrendId_Trends FOREIGN KEY (TrendId) REFERENCES Trends(id) 
 ALTER TABLE Songs
-ADD CONSTRAINT fk_DetailsId_SongDetails FOREIGN KEY (DetailsId) REFERENCES SongDetails (id)
+ADD CONSTRAINT fk_DetailsId_SongDetails FOREIGN KEY (DetailsId) REFERENCES SongDetails (id) ON DELETE CASCADE
 
 IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'SongArtists' AND type = 'U')
 BEGIN
@@ -152,9 +152,7 @@ CREATE TABLE SongArtists (
 ALTER TABLE SongArtists
 ADD CONSTRAINT fk_SongArtists_SongId_Artists FOREIGN KEY (ArtistId) REFERENCES [SpotifyDataset].[dbo].Artists (id)
 ALTER TABLE SongArtists
-ADD CONSTRAINT fk_SongArtists_ArtistId_Songs FOREIGN KEY (SongId) REFERENCES [SpotifyDataset].[dbo].Songs (id)
-
-
+ADD CONSTRAINT fk_SongArtists_ArtistId_Songs FOREIGN KEY (SongId) REFERENCES [SpotifyDataset].[dbo].Songs (id) ON DELETE CASCADE
 
 ALTER TABLE Songs
 ADD SourceID INT
@@ -208,6 +206,27 @@ WHERE streams IS NULL
 UPDATE Songs
 SET Popularity = 0
 WHERE Popularity IS NULL
+
+UPDATE Songs
+SET Popularity = RESULT.POP, streams = RESULT.STREAMS, Rank = RESULT.RANK
+FROM (
+	SELECT MIN([INNER].Id) AS ID, AVG (rank) AS RANK, SUM(streams) AS STREAMS, [INNER].track AS TRACK, AVG(popularity) AS POP
+	FROM (SELECT Id, Track FROM Songs WHERE Id IN (SELECT MIN (Id) FROM Songs GROUP BY Track)) AS [INNER]
+	LEFT OUTER JOIN Songs ON [INNER].Track = Songs.Track
+	GROUP BY [INNER].track
+) AS RESULT
+WHERE Songs.Id = RESULT.ID
+GO
+
+DELETE FROM Songs
+WHERE NOT Id IN
+(SELECT ID FROM (
+		SELECT MIN([INNER].Id) AS ID, AVG (rank) AS RANK, SUM(streams) AS STREAMS, [INNER].track AS TRACK, AVG(popularity) AS POP
+		FROM (SELECT Id, Track FROM Songs WHERE Id IN (SELECT MIN (Id) FROM Songs GROUP BY Track)) AS [INNER]
+		LEFT OUTER JOIN Songs ON [INNER].Track = Songs.Track
+		GROUP BY [INNER].track
+	) AS [RESULT]
+)
 
 INSERT INTO SongArtists
 SELECT SongId, ArtistId FROM (
