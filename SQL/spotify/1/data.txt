@@ -1,0 +1,80 @@
+cpus: '4'
+memory: 8G
+
+result format:
+ first 3 samples includes:
+  DBCC FREEPROCCACHE;
+  DBCC DROPCLEANBUFFERS; 
+  OPTION (RECOMPILE);
+
+ last 3 samples excludes:
+  DBCC FREEPROCCACHE;
+  DBCC DROPCLEANBUFFERS;
+  OPTION (RECOMPILE);
+
+Table 'SongArtists'. Scan count 25, logical reads 28995, physical reads 2, page server reads 0, read-ahead reads 49011, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+Table 'Artists'. Scan count 25, logical reads 739, physical reads 1, page server reads 0, read-ahead reads 239, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+Table 'Songs'. Scan count 0, logical reads 8, physical reads 6, page server reads 0, read-ahead reads 0, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+Table 'Worktable'. Scan count 0, logical reads 0, physical reads 0, page server reads 0, read-ahead reads 0, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+Table 'Worktable'. Scan count 0, logical reads 0, physical reads 0, page server reads 0, read-ahead reads 0, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+
+1.1 baseline
+CPU time = 297 ms,  elapsed time = 266 ms.
+CPU time = 319 ms,  elapsed time = 276 ms.
+CPU time = 255 ms,  elapsed time = 293 ms.
+CPU time = 130 ms,  elapsed time = 115 ms.
+CPU time = 192 ms,  elapsed time = 90 ms.
+CPU time = 223 ms,  elapsed time = 90 ms.
+
+1.2 limited select
+CPU time = 284 ms,  elapsed time = 272 ms.
+CPU time = 451 ms,  elapsed time = 274 ms.
+CPU time = 218 ms,  elapsed time = 290 ms.
+CPU time = 302 ms,  elapsed time = 125 ms.
+CPU time = 139 ms,  elapsed time = 85 ms.
+CPU time = 250 ms,  elapsed time = 106 ms.
+
+Table 'Worktable'. Scan count 0, logical reads 0, physical reads 0, page server reads 0, read-ahead reads 0, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+Table 'Songs'. Scan count 0, logical reads 8, physical reads 6, page server reads 0, read-ahead reads 0, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+Table 'SongArtists'. Scan count 1, logical reads 8, physical reads 4, page server reads 0, read-ahead reads 0, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+Table 'Artists'. Scan count 1, logical reads 3, physical reads 0, page server reads 0, read-ahead reads 0, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+
+1.3 indexing
+CPU time = 2 ms,  elapsed time = 6 ms.
+CPU time = 3 ms,  elapsed time = 7 ms.
+CPU time = 2 ms,  elapsed time = 6 ms.
+CPU time = 3 ms,  elapsed time = 3 ms.
+CPU time = 3 ms,  elapsed time = 2 ms
+CPU time = 0 ms,  elapsed time = 2 ms.
+
+1.4 no further optimizations will result in better performance
+
+
+cpus: '16'
+memory: 32G
+
+1.1 baseline
+CPU time = 284 ms,  elapsed time = 267 ms.
+CPU time = 306 ms,  elapsed time = 281 ms.
+CPU time = 216 ms,  elapsed time = 240 ms.
+CPU time = 130 ms,  elapsed time = 121 ms.
+CPU time = 181 ms,  elapsed time = 93 ms.
+CPU time = 224 ms,  elapsed time = 90 ms.
+
+1.2 limited select
+CPU time = 322 ms,  elapsed time = 292 ms.
+CPU time = 448 ms,  elapsed time = 276 ms.
+CPU time = 224 ms,  elapsed time = 291 ms.
+CPU time = 312 ms,  elapsed time = 126 ms.
+CPU time = 259 ms,  elapsed time = 102 ms.
+CPU time = 141 ms,  elapsed time = 136 ms.
+
+1.3 indexing
+CPU time = 1 ms,  elapsed time = 6 ms.
+CPU time = 1 ms,  elapsed time = 7 ms.
+CPU time = 2 ms,  elapsed time = 6 ms.
+CPU time = 0 ms,  elapsed time = 3 ms.
+CPU time = 1 ms,  elapsed time = 2 ms
+CPU time = 0 ms,  elapsed time = 2 ms.
+
+1.4 no further optimizations will result in better performance

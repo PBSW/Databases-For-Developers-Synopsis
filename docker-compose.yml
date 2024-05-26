@@ -26,8 +26,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '4'    # Limit to 0.5 CPU core
-          memory: 8G   # Limit to 512MB memory
+          cpus: '12'    # Limit to 0.5 CPU core
+          memory: 32G   # Limit to 512MB memory
 
   mongodb: # Conn: mongodb://localhost:27018
     image: mongo:latest
