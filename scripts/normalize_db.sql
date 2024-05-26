@@ -210,3 +210,12 @@ GO
 ALTER TABLE SongDetails
 DROP COLUMN SourceID
 GO
+
+-- needed for composite primary key when using table partitioning
+INSERT INTO Trends (trend ) VALUES ('NULL')
+UPDATE Songs
+SET TrendId = 5
+WHERE TrendId IS NULL
+ALTER TABLE Songs
+ALTER COLUMN TrendId INT NOT NULL
+GO

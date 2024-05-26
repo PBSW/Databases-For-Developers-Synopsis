@@ -1,0 +1,111 @@
+
+ALTER DATABASE SpotifyDataset
+ADD FILEGROUP MOVE_DOWN
+ALTER DATABASE SpotifyDataset
+ADD FILEGROUP MOVE_UP
+ALTER DATABASE SpotifyDataset
+ADD FILEGROUP NEW_ENTRY
+ALTER DATABASE SpotifyDataset
+ADD FILEGROUP SAME_POSITION
+ALTER DATABASE SpotifyDataset
+ADD FILEGROUP NULL_POSITION
+GO
+
+ALTER TABLE SongArtists
+ADD PartitionID INT
+GO
+
+UPDATE  SongArtists
+SET SongArtists.PartitionID = 1
+WHERE SongId IN (SELECT Id FROM Songs WHERE TrendId = 1)
+
+UPDATE  SongArtists
+SET SongArtists.PartitionID = 2
+WHERE SongId IN (SELECT Id FROM Songs WHERE TrendId = 2)
+
+UPDATE  SongArtists
+SET SongArtists.PartitionID = 3
+WHERE SongId IN (SELECT Id FROM Songs WHERE TrendId = 3)
+
+UPDATE  SongArtists
+SET SongArtists.PartitionID = 4
+WHERE SongId IN (SELECT Id FROM Songs WHERE TrendId = 4)
+
+UPDATE  SongArtists
+SET SongArtists.PartitionID = 5
+WHERE SongId IN (SELECT Id FROM Songs WHERE TrendId = 5)
+
+GO
+
+ALTER DATABASE SpotifyDataset
+ADD FILE
+(
+    NAME = MOVE_UP,
+    FILENAME = '/var/opt/mssql/data/Part1.mdf',
+    SIZE = 3072 KB,
+    MAXSIZE = UNLIMITED,
+    FILEGROWTH = 1024 KB
+) TO FILEGROUP MOVE_UP
+
+ALTER DATABASE SpotifyDataset
+ADD FILE
+(
+    NAME = MOVE_DOWN,
+    FILENAME = '/var/opt/mssql/data/Part2.mdf',
+    SIZE = 3072 KB,
+    MAXSIZE = UNLIMITED,
+    FILEGROWTH = 1024 KB
+) TO FILEGROUP MOVE_DOWN
+
+ALTER DATABASE SpotifyDataset
+ADD FILE
+(
+    NAME = NEW_ENTRY,
+    FILENAME = '/var/opt/mssql/data/Part4.mdf',
+    SIZE = 3072 KB,
+    MAXSIZE = UNLIMITED,
+    FILEGROWTH = 1024 KB
+) TO FILEGROUP NEW_ENTRY
+
+ALTER DATABASE SpotifyDataset
+ADD FILE
+(
+    NAME = SAME_POSITION,
+    FILENAME = '/var/opt/mssql/data/Part3.mdf',
+    SIZE = 3072 KB,
+    MAXSIZE = UNLIMITED,
+    FILEGROWTH = 1024 KB
+) TO FILEGROUP SAME_POSITION
+
+ALTER DATABASE SpotifyDataset
+ADD FILE
+(
+    NAME = NULL_POSITION,
+    FILENAME = '/var/opt/mssql/data/Part5.mdf',
+    SIZE = 3072 KB,
+    MAXSIZE = UNLIMITED,
+    FILEGROWTH = 1024 KB
+) TO FILEGROUP NULL_POSITION
+GO
+
+CREATE PARTITION FUNCTION pf_Song_trends (INT)
+AS RANGE LEFT FOR VALUES (1, 2, 3, 4);
+GO
+
+CREATE PARTITION SCHEME ps_Song_trends
+AS PARTITION pf_Song_trends
+TO (MOVE_DOWN, MOVE_UP, NEW_ENTRY, SAME_POSITION, NULL_POSITION);
+GO
+
+ALTER TABLE SongArtists DROP CONSTRAINT fk_SongArtists_ArtistId_Songs;
+ALTER TABLE Songs DROP CONSTRAINT PK__Songs__3214EC0754705CDE;
+ALTER TABLE Songs ADD CONSTRAINT PK__Songs__3214EC0754705CDE PRIMARY KEY CLUSTERED
+(
+    Id,
+    TrendId
+) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+ON ps_Song_trends(TrendId)
+GO
+
+ALTER TABLE SongArtists ADD CONSTRAINT fk_SongArtists_ArtistId_Songs FOREIGN KEY (SongId, PartitionID) REFERENCES [SpotifyDataset].[dbo].Songs (Id, TrendId)
+GO
