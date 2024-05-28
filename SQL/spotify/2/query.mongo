@@ -1,0 +1,1 @@
+db.spotify.find({ "Title": { $regex: 'Boule' }, "Album": { $regex: 'Boule'}}).sort( {  Popularity: -1, Rank: -1 } )

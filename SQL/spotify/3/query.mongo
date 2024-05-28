@@ -1,0 +1,1 @@
+db.spotify.find({ "trend": { $in: ['MOVE_UP', 'NEW_ENTRY', 'SAME_POSITION'] }}).sort( {  Popularity: -1, Rank: -1 } )
