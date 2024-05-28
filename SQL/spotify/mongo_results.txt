@@ -1,0 +1,19 @@
+case 1:
+db.spotify.find({ "Artists": { $regex: 'Burhan G' }}).sort( {  Popularity: -1, Rank: -1 } ) 
+TOTAL: (363 + 352 + 328 + 321) / 4 = 341.0 ms
+CPU: (193 + 182 + 186 + 178) / 4 = 184.75 ms
+IO: (170 + 170 + 142 + 142) / 4 = 156.0 ms
+
+
+case 2:
+db.spotify.find({ "Title": { $regex: 'Boule' }, "Album": { $regex: 'Boule'}}).sort( {  Popularity: -1, Rank: -1 } )
+TOTAL: (323 + 379 + 356 + 340) / 4 = 349.5 ms
+CPU: (186 + 229 + 226 + 212) / 4 = 213.25 ms
+IO: (137 + 150 + 130 + 128) / 4 = 136.25 ms
+
+
+case 3:
+db.spotify.find({ "trend": { $in: ['MOVE_UP', 'NEW_ENTRY', 'SAME_POSITION'] }}).sort( {  Popularity: -1, Rank: -1 } )
+TOTAL: 57 seconds 584 ms
+CPU: 165 ms
+IO: 57 seconds 419 ms
