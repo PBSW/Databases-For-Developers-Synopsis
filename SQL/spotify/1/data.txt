@@ -22,6 +22,8 @@ Table 'Worktable'. Scan count 0, logical reads 0, physical reads 0, page server 
 CPU time = 297 ms,  elapsed time = 266 ms.
 CPU time = 319 ms,  elapsed time = 276 ms.
 CPU time = 255 ms,  elapsed time = 293 ms.
+CPU time = 290 ms,  elapsed time = 272
+
 CPU time = 130 ms,  elapsed time = 115 ms.
 CPU time = 192 ms,  elapsed time = 90 ms.
 CPU time = 223 ms,  elapsed time = 90 ms.

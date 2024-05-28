@@ -2,6 +2,12 @@ SET STATISTICS PROFILE on
 SET STATISTICS IO on
 SET STATISTICS TIME on
 
+
+
+
+
+
+
 -- get popular songs (order by popularity, streams, ReleaseDate) where Trend is not MOVE_DOWN
 
 -- pagination

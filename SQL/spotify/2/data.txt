@@ -27,6 +27,10 @@ CPU time = 87 ms,  elapsed time = 90 ms.
 
 1.2 limited select does not improve speed
 
+
+Table 'Worktable'. Scan count 0, logical reads 0, physical reads 0, page server reads 0, read-ahead reads 0, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+Table 'Songs'. Scan count 2, logical reads 36, physical reads 0, page server reads 0, read-ahead reads 0, page server read-ahead reads 0, lob logical reads 0, lob physical reads 0, lob page server reads 0, lob read-ahead reads 0, lob page server read-ahead reads 0.
+
 1.3 indexing
 CPU time = 2 ms,  elapsed time = 12 ms.
 CPU time = 4 ms,  elapsed time = 13 ms.

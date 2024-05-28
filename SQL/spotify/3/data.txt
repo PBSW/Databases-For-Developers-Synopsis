@@ -56,6 +56,7 @@ CPU time = 2476 ms,  elapsed time = 11870 ms.
 CPU time = 2357 ms,  elapsed time = 11763 ms.
 
 pagination will improvement performance further and should be the approach in production (application logic)
+20,000
 
 cpus: '16'
 memory: 32G
